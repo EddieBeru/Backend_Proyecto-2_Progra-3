@@ -1,0 +1,62 @@
+CREATE DATABASE recetas;
+USE recetas;
+
+CREATE TABLE usuarios (
+  id VARCHAR(64) PRIMARY KEY,      -- en el código id es String
+  clave VARCHAR(255) NOT NULL,     -- clave (almacenar hashed)
+  nombre VARCHAR(255) NOT NULL,
+  tipo VARCHAR(20) NOT NULL CHECK (tipo IN ('DEFAULT','MEDICO','FARMACEUTICO','PACIENTE','ADMINISTRADOR')),
+  -- Campos específicos por tipo; pueden quedar NULL para tipos distintos
+  especialidad VARCHAR(255),               -- para MEDICO
+  licencia_farmaceutica VARCHAR(255),      -- para FARMACEUTICO
+  fecha_nacimiento DATE                    -- para PACIENTE
+);
+
+CREATE INDEX idx_usuarios_tipo ON usuarios(tipo);
+
+
+-- 4) Tabla de medicamentos (Medicamento)
+CREATE TABLE medicamentos (
+  codigo VARCHAR(64) PRIMARY KEY,
+  nombre VARCHAR(255) NOT NULL,
+  presentacion VARCHAR(100)                 -- PresentacionMedicamento en código (uso varchar por flexibilidad)
+);
+
+CREATE INDEX idx_medicamentos_nombre ON medicamentos(nombre);
+
+
+-- 5) Tabla de recetas (Receta)
+CREATE TABLE recetas (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  medico_id VARCHAR(64),
+  paciente_id VARCHAR(64),
+  estado VARCHAR(20) NOT NULL CHECK (estado IN ('CONFECCIONADA','PROCESO','LISTA','ENTREGADA')) DEFAULT 'CONFECCIONADA',
+  fecha_confeccion TIMESTAMP NOT NULL,
+  fecha_retiro TIMESTAMP,
+  -- opcional: forzar unicidad similar a la eliminación por paciente+fecha en el código XML
+  UNIQUE (paciente_id, fecha_confeccion),
+
+  FOREIGN KEY (medico_id) REFERENCES usuarios(id) ON DELETE SET NULL,   -- referencia al medico que confeccionó
+  FOREIGN KEY (paciente_id) REFERENCES usuarios(id) ON DELETE CASCADE -- referencia al paciente
+);
+
+CREATE INDEX idx_recetas_paciente ON recetas(paciente_id);
+CREATE INDEX idx_recetas_medico ON recetas(medico_id);
+CREATE INDEX idx_recetas_estado ON recetas(estado);
+
+
+-- 6) Tabla de preescripciones (Preescripcion) — elementos de una Receta
+CREATE TABLE receta_preescripciones (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  receta_id INT,
+  medicamento_codigo VARCHAR(64),
+  cantidad INTEGER NOT NULL CHECK (cantidad > 0),
+  indicaciones TEXT,
+  duracion_dias INTEGER NOT NULL CHECK (duracion_dias >= 0),
+
+  FOREIGN KEY (receta_id) REFERENCES recetas(id) ON DELETE CASCADE,
+  FOREIGN KEY (medicamento_codigo) REFERENCES medicamentos(codigo) ON DELETE SET NULL
+);
+
+CREATE INDEX idx_preescripciones_receta ON receta_preescripciones(receta_id);
+CREATE INDEX idx_preescripciones_medicamento ON receta_preescripciones(medicamento_codigo);
