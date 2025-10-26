@@ -31,7 +31,7 @@ public class ClienteHandler implements Runnable {
     UsuarioService usuarioService = new UsuarioService();
 
 
-    public ClienteHandler(Socket socket) throws IOException {
+    public ClienteHandler(Socket socket) {
         this.socket = socket;
     }
 

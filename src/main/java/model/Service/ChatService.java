@@ -2,15 +2,9 @@ package model.Service;
 
 import model.ClienteHandler;
 import model.Networking.Respuesta;
-import model.Networking.Solicitud;
 import model.Networking.TipoRespuesta;
 import model.Server;
 
-import java.io.ObjectOutputStream;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public class ChatService {
     public Respuesta procesarMensaje(ClienteHandler emisor, String receptorId, String mensaje) {
