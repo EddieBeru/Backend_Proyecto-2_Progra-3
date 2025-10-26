@@ -3,11 +3,11 @@ package model;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Server {
-    private List<Thread> clientes;
+    static private final ConcurrentHashMap<String,ClienteHandler> clientes = new ConcurrentHashMap<>();
 
     private boolean running;
 
@@ -26,7 +26,6 @@ public class Server {
 
         //Inicializar los atributos
         try {
-            this.clientes = new ArrayList<>();
             this.serverSocket = new ServerSocket(port);
         } catch (IOException e) {
             System.err.println("Error al iniciar el servidor: " + e.getMessage());
@@ -53,11 +52,52 @@ public class Server {
 
     private void inicializarCliente(Socket socket){
         try {
-            Thread clientThread = new Thread(new ClienteHandler(socket));
-            clientes.add(clientThread);
+            ClienteHandler cliente = new ClienteHandler(socket);
+            Thread clientThread = new Thread(cliente);
+            String connId = addClient(cliente);
+            System.out.println("Nuevo cliente conectado: " + connId);
             clientThread.start();
         } catch (Exception e){
             System.err.println("Error al inicializar el cliente: " + e.getMessage());
         }
+    }
+
+    public static void addClient(String userId, ClienteHandler handler) {
+        clientes.put(userId, handler);
+    }
+
+    public static String addClient(ClienteHandler handler) {
+        String connId = UUID.randomUUID().toString();
+        clientes.put(connId, handler);
+        handler.setId(connId);
+        return connId;
+    }
+
+    public static void registerUser(String userId, ClienteHandler handler) {
+        String existingKey = null;
+        for (Map.Entry<String, ClienteHandler> e : clientes.entrySet()) {
+            if (e.getValue() == handler) {
+                existingKey = e.getKey();
+                break;
+            }
+        }
+        if (existingKey != null) {
+            clientes.remove(existingKey);
+        }
+        clientes.put(userId, handler);
+        handler.setId(userId);
+    }
+
+
+    public static void removeClient(String userId) {
+        clientes.remove(userId);
+    }
+
+    public static ClienteHandler getClient(String userId) {
+        return clientes.get(userId);
+    }
+
+    public static Collection<ClienteHandler> getAllClients() {
+        return clientes.values();
     }
 }

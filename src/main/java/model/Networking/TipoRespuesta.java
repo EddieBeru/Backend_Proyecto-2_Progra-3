@@ -6,5 +6,6 @@ public enum TipoRespuesta {
     ACCION_DESCONOCIDA,
     INVALIDO,
     YA_EXISTE,
-    NO_EXISTE
+    NO_EXISTE,
+    MENSAJE
 }
