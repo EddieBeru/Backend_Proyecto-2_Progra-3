@@ -1,8 +1,8 @@
-package model;
+package Model;
 
-import model.Networking.Respuesta;
-import model.Networking.Solicitud;
-import model.Networking.TipoSolicitud;
+import Model.Networking.Respuesta;
+import Model.Networking.Solicitud;
+import Model.Networking.TipoSolicitud;
 
 import java.io.*;
 import java.net.*;

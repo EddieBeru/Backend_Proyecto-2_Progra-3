@@ -10,32 +10,32 @@ poderse correr en máquinas separadas dentro de una red. Obviamente múltiples F
 conectados a un único Backend. Las responsabilidades de cada uno se describen a continuación:
 Backend
 Corresponde a las capas Lógica y de Datos. Deberá ser implementado como un Servidor que no tiene ninguna
-interfaz de usuario. Más bien “escuchará” en un número de puerto seleccionado las peticiones que le lleguen de
+interfaz de usuarioRed. Más bien “escuchará” en un número de puerto seleccionado las peticiones que le lleguen de
 las instancias de Frontend y las atenderá y responderá. El Backend será el único que se conectará a la base de datos
 para recuperar o almacenar los datos allí, y utilizar dichos datos para responder las peticiones que le lleguen desde
 los Frontend.
 Además de procesar y responder a cada Frontend las peticiones que éste le envíe, el Backend enviará
-notificaciones asincrónicas a todos los demás Frontend’s que estén activos, cada vez que un usuario ingrese (login)
-o salga (logout), o cuando un usuario desee enviar un mensaje (tipo chat) a otro usuario.
+notificaciones asincrónicas a todos los demás Frontend’s que estén activos, cada vez que un usuarioRed ingrese (login)
+o salga (logout), o cuando un usuarioRed desee enviar un mensaje (tipo chat) a otro usuarioRed.
 Frontend
 Corresponde a la capa de Presentación de la aplicación (MVC: Modelo-Vista-Controlador). Al iniciar, el Frontend
 establecerá una conexión con el Backend. Luego usará esa conexión para enviar las peticiones atendiendo a las
-acciones del usuario; y también para recibir las notificaciones asíncronicas del Backend. Este componente NO debe
+acciones del usuarioRed; y también para recibir las notificaciones asíncronicas del Backend. Este componente NO debe
 tener ninguna referencia relacionada con la base de datos.
 Aparte de las funciones que ya se tenían (según el Proyecto #1), ahora también deberá tenerse las siguientes
 funcionalidades:
-• Área de Usuarios: Un área, al lado derecho de la pantalla principal, donde mostrará la lista de los usuarios
-activos (logeados). A esta lista se le agregan o quitan usuarios cada vez que lleguen notificaciones
-asincrónicas del Backend indicando que un usuario ingresó o salió, como se explicó antes.
+• Área de Usuarios: Un área, al lado derecho de la pantalla principal, donde mostrará la lista de los usuarioReds
+activos (logeados). A esta lista se le agregan o quitan usuarioReds cada vez que lleguen notificaciones
+asincrónicas del Backend indicando que un usuarioRed ingresó o salió, como se explicó antes.
 
 Universidad Nacional
 Facultad de Ciencias Exactas y Naturales
 Escuela De Informática
 
 2/2
-• Enviar mensaje: El usuario podrá escoger a otro de los usuarios que esté activo y enviarle un mensaje de
+• Enviar mensaje: El usuarioRed podrá escoger a otro de los usuarioReds que esté activo y enviarle un mensaje de
 texto (que se ingresa mediate una ventana emergente)
-• Recibir mensaje: Se podrá seleccionar al usuario remitente y presionar el botón de “Recibir” para recibir
+• Recibir mensaje: Se podrá seleccionar al usuarioRed remitente y presionar el botón de “Recibir” para recibir
 dicho mensaje (que se mostrará en una ventana emergente).
 
 Indicaciones

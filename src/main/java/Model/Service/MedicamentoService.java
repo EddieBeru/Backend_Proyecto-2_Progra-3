@@ -1,4 +1,4 @@
-package model.Service;
+package Model.Service;
 
 public class MedicamentoService {
 }

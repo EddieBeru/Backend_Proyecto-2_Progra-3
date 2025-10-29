@@ -1,10 +1,12 @@
-package model.Service;
+package Model.Service;
 
-import model.DAO.UsuarioDAO;
-import model.Networking.Respuesta;
-import model.Networking.TipoRespuesta;
-import model.PasswordUtil;
-import model.Usuario;
+import Model.ClienteHandler;
+import Model.DAO.UsuarioDAO;
+import Model.Networking.Respuesta;
+import Model.Networking.TipoRespuesta;
+import Model.PasswordUtil;
+import Model.Server;
+import Model.UsuarioRed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,42 +16,42 @@ public class UsuarioService {
     }
 
     public Respuesta login(String username, String contra){
-        List<Usuario> usuarios;
+        List<UsuarioRed> usuarioReds;
         try {
-            usuarios = new UsuarioDAO().findAll();
+            usuarioReds = new UsuarioDAO().findAll();
         } catch (Exception e) {
             return new Respuesta(TipoRespuesta.ERROR_GENERICO,
-                    "Error al obtener los usuarios: " + e.getMessage());
+                    "Error al obtener los usuarioReds: " + e.getMessage());
         }
 
-        for(Usuario u : usuarios){
+        for(UsuarioRed u : usuarioReds){
             if (u.getId().equalsIgnoreCase(username) &&
                     PasswordUtil.verificar(contra.toCharArray(), u.getClave())){
                 return new Respuesta(TipoRespuesta.OK, u);
             }
         }
 
-        return new Respuesta(TipoRespuesta.INVALIDO, "Usuario no encontrado o clave incorrecta");
+        return new Respuesta(TipoRespuesta.INVALIDO, "UsuarioRed no encontrado o clave incorrecta");
     }
 
-    public Respuesta register(Usuario usuario){
-        List<Usuario> usuarios = new ArrayList<>();
+    public Respuesta register(UsuarioRed usuarioRed){
+        List<UsuarioRed> usuarioReds = new ArrayList<>();
         try {
-            usuarios = new UsuarioDAO().findAll();
+            usuarioReds = new UsuarioDAO().findAll();
         } catch (Exception e) {
             return new Respuesta(TipoRespuesta.ERROR_GENERICO, "Ocurrió un error");
         }
 
         //BUSCAR SI YA EXISTE CON ESE ID
-        for (Usuario u : usuarios){
-            if (u.getId().equalsIgnoreCase(usuario.getId())){
-                return new Respuesta(TipoRespuesta.YA_EXISTE, "Usuario ya existe");
+        for (UsuarioRed u : usuarioReds){
+            if (u.getId().equalsIgnoreCase(usuarioRed.getId())){
+                return new Respuesta(TipoRespuesta.YA_EXISTE, "UsuarioRed ya existe");
             }
         }
 
         try {
-            new UsuarioDAO().insert(usuario);
-            return new Respuesta(TipoRespuesta.OK, usuario);
+            new UsuarioDAO().insert(usuarioRed);
+            return new Respuesta(TipoRespuesta.OK, usuarioRed);
         } catch (Exception e) {
             return new Respuesta(TipoRespuesta.ERROR_GENERICO, "Ocurrio un error");
         }
@@ -65,16 +67,40 @@ public class UsuarioService {
         }
     }
 
-    public Respuesta cambiarClave(String id, String viejaClave, String nuevaClave) {
-        List<Usuario> usuarios;
+    public Respuesta getUsuariosActivos(){
         try {
-            usuarios = new UsuarioDAO().findAll();
+            List<ClienteHandler> clientesActivos = Server.getAllClients().stream().toList();
+            List<UsuarioRed> usuariosActivos = new ArrayList<>();
+            for (ClienteHandler ch : clientesActivos) {
+                String userId = ch.getId();
+                if (userId != null) {
+                    try {
+                        UsuarioRed u = new UsuarioDAO().findById(userId);
+                        if (u != null && !usuariosActivos.contains(u)) {
+                            usuariosActivos.add(u);
+                        }
+                    } catch (Exception e) {
+                        // Manejar excepción si es necesario
+                    }
+                }
+            }
+            return new Respuesta(TipoRespuesta.OK,usuariosActivos);
         } catch (Exception e) {
             return new Respuesta(TipoRespuesta.ERROR_GENERICO,
-                    "Error al obtener los usuarios: " + e.getMessage());
+                    "Error al obtener los usuarios activos: " + e.getMessage());
+        }
+    }
+
+    public Respuesta cambiarClave(String id, String viejaClave, String nuevaClave) {
+        List<UsuarioRed> usuarioReds;
+        try {
+            usuarioReds = new UsuarioDAO().findAll();
+        } catch (Exception e) {
+            return new Respuesta(TipoRespuesta.ERROR_GENERICO,
+                    "Error al obtener los usuarioReds: " + e.getMessage());
         }
 
-        for (Usuario u : usuarios) {
+        for (UsuarioRed u : usuarioReds) {
             if (u.getId().equalsIgnoreCase(id)) {
                 if (!PasswordUtil.verificar(viejaClave.toCharArray(), u.getClave())) {
                     return new Respuesta(TipoRespuesta.INVALIDO, "Contraseña antigua incorrecta");
@@ -95,6 +121,6 @@ public class UsuarioService {
                 }
             }
         }
-        return new Respuesta(TipoRespuesta.NO_EXISTE, "Usuario no encontrado");
+        return new Respuesta(TipoRespuesta.NO_EXISTE, "UsuarioRed no encontrado");
     }
 }

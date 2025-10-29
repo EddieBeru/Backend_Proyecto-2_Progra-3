@@ -1,4 +1,4 @@
-package model.Networking;
+package Model.Networking;
 
 public enum TipoRespuesta {
     OK,
@@ -7,5 +7,7 @@ public enum TipoRespuesta {
     INVALIDO,
     YA_EXISTE,
     NO_EXISTE,
-    MENSAJE
+    MENSAJE,
+    USUARIO_CONECTADO,
+    USUARIO_DESCONECTADO
 }

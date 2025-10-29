@@ -1,9 +1,9 @@
-package model.Service;
+package Model.Service;
 
-import model.ClienteHandler;
-import model.Networking.Respuesta;
-import model.Networking.TipoRespuesta;
-import model.Server;
+import Model.ClienteHandler;
+import Model.Networking.Respuesta;
+import Model.Networking.TipoRespuesta;
+import Model.Server;
 
 
 public class ChatService {
@@ -49,6 +49,6 @@ public class ChatService {
                 Server.removeClient(cliente.getId());
             }
         }
-        return new Respuesta(model.Networking.TipoRespuesta.OK, mensaje);
+        return new Respuesta(Model.Networking.TipoRespuesta.OK, mensaje);
     }
 }

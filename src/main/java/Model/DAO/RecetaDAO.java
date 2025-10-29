@@ -1,7 +1,7 @@
-package model.DAO;
+package Model.DAO;
 
-import model.ConexionDB;
-import model.Receta;
+import Model.ConexionDB;
+import Model.Receta;
 
 import java.sql.*;
 import java.util.ArrayList;

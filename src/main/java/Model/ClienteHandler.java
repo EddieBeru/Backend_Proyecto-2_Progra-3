@@ -1,13 +1,11 @@
-package model;
+package Model;
 
-import model.Networking.Respuesta;
-import model.Networking.Solicitud;
-import model.Networking.TipoRespuesta;
-import model.Networking.TipoSolicitud;
-import model.Service.ChatService;
-import model.Service.MedicamentoService;
-import model.Service.RecetaService;
-import model.Service.UsuarioService;
+import Model.Networking.*;
+import Model.Service.ChatService;
+import Model.Service.MedicamentoService;
+import Model.Service.RecetaService;
+import Model.Service.UsuarioService;
+import Model.Usuario.Usuario;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -21,7 +19,7 @@ public class ClienteHandler implements Runnable {
     private ObjectInputStream in;
     private ObjectOutputStream out;
 
-    Usuario usuario;
+    UsuarioRed usuarioRed;
     String userId;
 
     //Servicios
@@ -68,11 +66,27 @@ public class ClienteHandler implements Runnable {
                 running = false;
                 yield new Respuesta(TipoRespuesta.OK, "Conexion cerrada");
             }
-            case LOGIN -> usuarioService.login(((String[]) datos)[0], ((String[]) datos)[1]);
-            case REGISTRO -> usuarioService.register((Usuario) datos);
+            case LOGIN -> {
+                // Realizar login y si es OK registrar al usuarioRed en el Server
+                String[] cred = (String[]) datos;
+                Respuesta r = usuarioService.login(cred[0], cred[1]);
+                if (r.getEstado() == TipoRespuesta.OK && r.getResultado() instanceof UsuarioRed u) {
+                    String uid = u.getId();
+                    setId(uid);
+                    Server.registerUser(uid, this);
+                }
+                yield r;
+            }
+            case REGISTRO -> usuarioService.register(Utils.usuarioToUsuarioRed((Usuario) datos));
             case GET_USUARIOS -> usuarioService.getUsuarios();
-            case GET_USUARIOS_ACTIVOS -> null;
-            case CAMBIO_CLAVE -> null;
+            case GET_USUARIOS_ACTIVOS -> usuarioService.getUsuariosActivos();
+            case CAMBIO_CLAVE -> {
+                String[] info = (String[]) datos;
+                String id = info[0];
+                String viejaClave = info[1];
+                String nuevaClave = info[2];
+                yield usuarioService.cambiarClave(id, viejaClave, nuevaClave);
+            }
             case MENSAJE -> chatService.procesarMensaje(this, ((String[]) datos)[0], ((String[]) datos)[1]);
             case MENSAJE_TODOS -> chatService.procesarMensajeATodos(this, (String) datos);
         };

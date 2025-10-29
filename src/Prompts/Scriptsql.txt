@@ -1,7 +1,7 @@
 CREATE DATABASE recetas;
 USE recetas;
 
-CREATE TABLE usuarios (
+CREATE TABLE usuarioReds (
   id VARCHAR(64) PRIMARY KEY,      -- en el código id es String
   clave VARCHAR(255) NOT NULL,     -- clave (almacenar hashed)
   nombre VARCHAR(255) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE usuarios (
   fecha_nacimiento DATE                    -- para PACIENTE
 );
 
-CREATE INDEX idx_usuarios_tipo ON usuarios(tipo);
+CREATE INDEX idx_usuarios_tipo ON usuarioReds(tipo);
 
 
 -- 4) Tabla de medicamentos (Medicamento)
@@ -36,8 +36,8 @@ CREATE TABLE recetas (
   -- opcional: forzar unicidad similar a la eliminación por paciente+fecha en el código XML
   UNIQUE (paciente_id, fecha_confeccion),
 
-  FOREIGN KEY (medico_id) REFERENCES usuarios(id) ON DELETE SET NULL,   -- referencia al medico que confeccionó
-  FOREIGN KEY (paciente_id) REFERENCES usuarios(id) ON DELETE CASCADE -- referencia al paciente
+  FOREIGN KEY (medico_id) REFERENCES usuarioReds(id) ON DELETE SET NULL,   -- referencia al medico que confeccionó
+  FOREIGN KEY (paciente_id) REFERENCES usuarioReds(id) ON DELETE CASCADE -- referencia al paciente
 );
 
 CREATE INDEX idx_recetas_paciente ON recetas(paciente_id);

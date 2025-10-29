@@ -1,7 +1,7 @@
-package model.DAO;
+package Model.DAO;
 
-import model.ConexionDB;
-import model.Medicamento;
+import Model.ConexionDB;
+import Model.Medicamento;
 
 import java.sql.*;
 import java.util.ArrayList;

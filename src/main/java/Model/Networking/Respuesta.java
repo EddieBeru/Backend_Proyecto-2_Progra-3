@@ -1,4 +1,4 @@
-package model.Networking;
+package Model.Networking;
 import java.io.Serializable;
 
 public class Respuesta implements Serializable {

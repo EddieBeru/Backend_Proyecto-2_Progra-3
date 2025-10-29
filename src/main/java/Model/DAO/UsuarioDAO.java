@@ -1,7 +1,8 @@
-package model.DAO;
+package Model.DAO;
 
-import model.ConexionDB;
-import model.Usuario;
+import Model.ConexionDB;
+import Model.TipoUsuario;
+import Model.UsuarioRed;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -14,13 +15,13 @@ public class UsuarioDAO {
         conexion = ConexionDB.getConexion();
     }
 
-    public void insert(Usuario u) throws SQLException {
+    public void insert(UsuarioRed u) throws SQLException {
         String sql = "INSERT INTO usuarios (id, clave, nombre, tipo, especialidad, licencia_farmaceutica, fecha_nacimiento) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setString(1, u.getId());
             ps.setString(2, u.getClave());
             ps.setString(3, u.getNombre());
-            ps.setString(4, u.getTipo());
+            ps.setString(4, String.valueOf(u.getTipo()));
             ps.setString(5, u.getEspecialidad());
             ps.setString(6, u.getLicenciaFarmaceutica());
             if (u.getFechaNacimiento() != null) ps.setDate(7, u.getFechaNacimiento());
@@ -29,12 +30,12 @@ public class UsuarioDAO {
         }
     }
 
-    public void update(Usuario u) throws SQLException {
+    public void update(UsuarioRed u) throws SQLException {
         String sql = "UPDATE usuarios SET clave = ?, nombre = ?, tipo = ?, especialidad = ?, licencia_farmaceutica = ?, fecha_nacimiento = ? WHERE id = ?";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setString(1, u.getClave());
             ps.setString(2, u.getNombre());
-            ps.setString(3, u.getTipo());
+            ps.setString(3, String.valueOf(u.getTipo()));
             ps.setString(4, u.getEspecialidad());
             ps.setString(5, u.getLicenciaFarmaceutica());
             if (u.getFechaNacimiento() != null) ps.setDate(6, u.getFechaNacimiento());
@@ -52,17 +53,17 @@ public class UsuarioDAO {
         }
     }
 
-    public Usuario findById(String id) throws SQLException {
+    public UsuarioRed findById(String id) throws SQLException {
         String sql = "SELECT id, clave, nombre, tipo, especialidad, licencia_farmaceutica, fecha_nacimiento FROM usuarios WHERE id = ?";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setString(1, id);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return new Usuario(
+                    return new UsuarioRed(
                             rs.getString("id"),
                             rs.getString("clave"),
                             rs.getString("nombre"),
-                            rs.getString("tipo"),
+                            TipoUsuario.valueOf(rs.getString("tipo")),
                             rs.getString("especialidad"),
                             rs.getString("licencia_farmaceutica"),
                             rs.getDate("fecha_nacimiento")
@@ -73,17 +74,17 @@ public class UsuarioDAO {
         }
     }
 
-    public List<Usuario> findAll() throws SQLException {
+    public List<UsuarioRed> findAll() throws SQLException {
         String sql = "SELECT id, clave, nombre, tipo, especialidad, licencia_farmaceutica, fecha_nacimiento FROM usuarios";
-        List<Usuario> lista = new ArrayList<>();
+        List<UsuarioRed> lista = new ArrayList<>();
         try (PreparedStatement ps = conexion.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
-                lista.add(new Usuario(
+                lista.add(new UsuarioRed(
                         rs.getString("id"),
                         rs.getString("clave"),
                         rs.getString("nombre"),
-                        rs.getString("tipo"),
+                        TipoUsuario.valueOf(rs.getString("tipo")),
                         rs.getString("especialidad"),
                         rs.getString("licencia_farmaceutica"),
                         rs.getDate("fecha_nacimiento")

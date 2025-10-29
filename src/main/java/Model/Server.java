@@ -1,4 +1,7 @@
-package model;
+package Model;
+
+import Model.Networking.Respuesta;
+import Model.Networking.TipoRespuesta;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -70,6 +73,7 @@ public class Server {
         String connId = UUID.randomUUID().toString();
         clientes.put(connId, handler);
         handler.setId(connId);
+
         return connId;
     }
 
@@ -86,6 +90,8 @@ public class Server {
         }
         clientes.put(userId, handler);
         handler.setId(userId);
+
+        notifyUserConnected(userId);
     }
 
 
@@ -99,5 +105,20 @@ public class Server {
 
     public static Collection<ClienteHandler> getAllClients() {
         return clientes.values();
+    }
+
+    public static void notifyUserConnected(String userId) {
+        Respuesta aviso = new Respuesta(TipoRespuesta.USUARIO_CONECTADO, getClient(userId));
+        for (ClienteHandler ch : clientes.values()) {
+            // si el cliente tiene el mismo id, omitir
+            String id = ch.getId();
+            if (id != null && id.equals(userId)) continue;
+            try {
+                ch.send(aviso);
+            } catch (Exception e) {
+                // si falla enviar, remover al cliente problemático
+                removeClient(ch.getId());
+            }
+        }
     }
 }

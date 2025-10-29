@@ -1,4 +1,4 @@
-package model;
+package Model;
 public class Medicamento {
     private String codigo;
     private String nombre;
