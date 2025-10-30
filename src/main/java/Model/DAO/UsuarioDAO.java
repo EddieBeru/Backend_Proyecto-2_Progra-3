@@ -1,7 +1,7 @@
 package Model.DAO;
 
 import Model.ConexionDB;
-import Model.TipoUsuario;
+import Model.Enum.TipoUsuario;
 import Model.UsuarioRed;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ public class UsuarioDAO {
     }
 
     public void insert(UsuarioRed u) throws SQLException {
-        String sql = "INSERT INTO usuarios (id, clave, nombre, tipo, especialidad, licencia_farmaceutica, fecha_nacimiento) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO usuarios (id, clave, nombre, tipo, especialidad, licencia_farmaceutica, fecha_nacimiento, telefono) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setString(1, u.getId());
             ps.setString(2, u.getClave());
@@ -26,12 +26,13 @@ public class UsuarioDAO {
             ps.setString(6, u.getLicenciaFarmaceutica());
             if (u.getFechaNacimiento() != null) ps.setDate(7, u.getFechaNacimiento());
             else ps.setNull(7, Types.DATE);
+            ps.setString(8, u.getTelefono());
             ps.executeUpdate();
         }
     }
 
     public void update(UsuarioRed u) throws SQLException {
-        String sql = "UPDATE usuarios SET clave = ?, nombre = ?, tipo = ?, especialidad = ?, licencia_farmaceutica = ?, fecha_nacimiento = ? WHERE id = ?";
+        String sql = "UPDATE usuarios SET clave = ?, nombre = ?, tipo = ?, especialidad = ?, licencia_farmaceutica = ?, fecha_nacimiento = ?, telefono = ? WHERE id = ?";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setString(1, u.getClave());
             ps.setString(2, u.getNombre());
@@ -40,7 +41,8 @@ public class UsuarioDAO {
             ps.setString(5, u.getLicenciaFarmaceutica());
             if (u.getFechaNacimiento() != null) ps.setDate(6, u.getFechaNacimiento());
             else ps.setNull(6, Types.DATE);
-            ps.setString(7, u.getId());
+            ps.setString(7, u.getTelefono());
+            ps.setString(8, u.getId());
             ps.executeUpdate();
         }
     }
@@ -54,7 +56,7 @@ public class UsuarioDAO {
     }
 
     public UsuarioRed findById(String id) throws SQLException {
-        String sql = "SELECT id, clave, nombre, tipo, especialidad, licencia_farmaceutica, fecha_nacimiento FROM usuarios WHERE id = ?";
+        String sql = "SELECT id, clave, nombre, tipo, especialidad, licencia_farmaceutica, fecha_nacimiento, telefono FROM usuarios WHERE id = ?";
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
             ps.setString(1, id);
             try (ResultSet rs = ps.executeQuery()) {
@@ -66,7 +68,8 @@ public class UsuarioDAO {
                             TipoUsuario.valueOf(rs.getString("tipo")),
                             rs.getString("especialidad"),
                             rs.getString("licencia_farmaceutica"),
-                            rs.getDate("fecha_nacimiento")
+                            rs.getDate("fecha_nacimiento"),
+                            rs.getString("telefono")
                     );
                 }
                 return null;
@@ -75,7 +78,7 @@ public class UsuarioDAO {
     }
 
     public List<UsuarioRed> findAll() throws SQLException {
-        String sql = "SELECT id, clave, nombre, tipo, especialidad, licencia_farmaceutica, fecha_nacimiento FROM usuarios";
+        String sql = "SELECT id, clave, nombre, tipo, especialidad, licencia_farmaceutica, fecha_nacimiento, telefono FROM usuarios";
         List<UsuarioRed> lista = new ArrayList<>();
         try (PreparedStatement ps = conexion.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -87,7 +90,8 @@ public class UsuarioDAO {
                         TipoUsuario.valueOf(rs.getString("tipo")),
                         rs.getString("especialidad"),
                         rs.getString("licencia_farmaceutica"),
-                        rs.getDate("fecha_nacimiento")
+                        rs.getDate("fecha_nacimiento"),
+                        rs.getString("telefono")
                 ));
             }
         }

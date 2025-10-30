@@ -1,6 +1,6 @@
 package Model.Usuario;
 
-import Model.TipoUsuario;
+import Model.Enum.TipoUsuario;
 
 public class Medico extends Usuario {
     private String especialidad;

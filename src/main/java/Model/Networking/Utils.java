@@ -1,6 +1,6 @@
 package Model.Networking;
 
-import Model.TipoUsuario;
+import Model.Enum.TipoUsuario;
 import Model.Usuario.Administrador;
 import Model.UsuarioRed;
 
@@ -16,7 +16,8 @@ public class Utils {
                     TipoUsuario.ADMINISTRADOR,
                     "",
                     "",
-                    null
+                    null,
+                    ""
             );
         }
         if (usuario instanceof Model.Usuario.Medico medico) {
@@ -27,7 +28,8 @@ public class Utils {
                     TipoUsuario.MEDICO,
                     medico.getEspecialidad(),
                     "",
-                    null
+                    null,
+                    ""
             );
         }
         if (usuario instanceof Model.Usuario.Farmaceutico farmaceutico) {
@@ -38,7 +40,8 @@ public class Utils {
                     TipoUsuario.FARMACEUTICO,
                     "",
                     farmaceutico.getLicenciaFarmaceutica(),
-                    null
+                    null,
+                    ""
             );
         }
         if (usuario instanceof Model.Usuario.Paciente paciente) {
@@ -49,7 +52,8 @@ public class Utils {
                     TipoUsuario.PACIENTE,
                     "",
                     "",
-                    (Date) paciente.getFechaNacimiento()
+                    (Date) paciente.getFechaNacimiento(),
+                    paciente.getTelefono()
             );
         }
         return new UsuarioRed(
@@ -59,7 +63,8 @@ public class Utils {
                 TipoUsuario.DEFAULT,
                 "",
                 "",
-                null
+                null,
+                ""
         );
     }
 }

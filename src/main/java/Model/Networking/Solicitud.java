@@ -1,8 +1,15 @@
 package Model.Networking;
 
+import lombok.Getter;
+
+import java.io.Serial;
 import java.io.Serializable;
 
+@Getter
 public class Solicitud implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 1L;
+
     private TipoSolicitud accion;
     private Object datos;
 
@@ -10,9 +17,6 @@ public class Solicitud implements Serializable {
         this.accion = accion;
         this.datos = datos;
     }
-
-    public TipoSolicitud getAccion() { return accion; }
-    public Object getDatos() { return datos; }
 
     @Override
     public String toString() {

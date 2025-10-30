@@ -1,6 +1,6 @@
 package Model.Usuario;
 
-import Model.TipoUsuario;
+import Model.Enum.TipoUsuario;
 import lombok.Getter;
 import lombok.Setter;
 

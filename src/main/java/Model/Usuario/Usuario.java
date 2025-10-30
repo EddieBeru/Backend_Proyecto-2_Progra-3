@@ -1,10 +1,14 @@
 package Model.Usuario;
 
-import Model.TipoUsuario;
+import Model.Enum.TipoUsuario;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class Usuario {
+public class Usuario implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String id;
     private String clave;
     private String nombre;

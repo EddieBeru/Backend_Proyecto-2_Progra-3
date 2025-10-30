@@ -61,7 +61,7 @@ public class ClienteHandler implements Runnable {
     private Respuesta procesarSolicitud(Solicitud sol){
         TipoSolicitud soli = sol.getAccion();
         Object datos = sol.getDatos();
-        return switch (soli) {
+        Respuesta resp = switch (soli) {
             case CERRAR -> {
                 running = false;
                 yield new Respuesta(TipoRespuesta.OK, "Conexion cerrada");
@@ -90,6 +90,9 @@ public class ClienteHandler implements Runnable {
             case MENSAJE -> chatService.procesarMensaje(this, ((String[]) datos)[0], ((String[]) datos)[1]);
             case MENSAJE_TODOS -> chatService.procesarMensajeATodos(this, (String) datos);
         };
+        System.out.println("Solicitud " + soli.toString() + " recibida de " + socket.getRemoteSocketAddress());
+        System.out.println("Repondido con " + resp.getEstado().toString() + " a " + socket.getRemoteSocketAddress());
+        return resp;
     }
 
     public void send(Respuesta respuesta) throws Exception {
