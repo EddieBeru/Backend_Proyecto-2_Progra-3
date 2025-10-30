@@ -8,6 +8,7 @@ import Model.PasswordUtil;
 import Model.Server;
 import Model.UsuarioRed;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -122,5 +123,14 @@ public class UsuarioService {
             }
         }
         return new Respuesta(TipoRespuesta.NO_EXISTE, "UsuarioRed no encontrado");
+    }
+
+    public Respuesta editarUsuario(UsuarioRed user) {
+        try {
+            new UsuarioDAO().update(user);
+        } catch (SQLException e) {
+            return new Respuesta(TipoRespuesta.ERROR_GENERICO, "Idk");
+        }
+        return new Respuesta(TipoRespuesta.OK, "Usuario editado correctamente");
     }
 }

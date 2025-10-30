@@ -77,7 +77,7 @@ public class ClienteHandler implements Runnable {
                 }
                 yield r;
             }
-            case REGISTRO -> usuarioService.register(Utils.usuarioToUsuarioRed((Usuario) datos));
+            case REGISTRO -> usuarioService.register((UsuarioRed) datos);
             case GET_USUARIOS -> usuarioService.getUsuarios();
             case GET_USUARIOS_ACTIVOS -> usuarioService.getUsuariosActivos();
             case CAMBIO_CLAVE -> {
@@ -89,6 +89,8 @@ public class ClienteHandler implements Runnable {
             }
             case MENSAJE -> chatService.procesarMensaje(this, ((String[]) datos)[0], ((String[]) datos)[1]);
             case MENSAJE_TODOS -> chatService.procesarMensajeATodos(this, (String) datos);
+            case EDITAR -> usuarioService.editarUsuario((UsuarioRed) datos);
+            case ELIMINAR -> null;
         };
         System.out.println("Solicitud " + soli.toString() + " recibida de " + socket.getRemoteSocketAddress());
         System.out.println("Repondido con " + resp.getEstado().toString() + " a " + socket.getRemoteSocketAddress());

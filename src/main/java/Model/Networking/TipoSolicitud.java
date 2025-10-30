@@ -8,5 +8,7 @@ public enum TipoSolicitud {
     GET_USUARIOS_ACTIVOS,
     CAMBIO_CLAVE,
     MENSAJE,
-    MENSAJE_TODOS
+    MENSAJE_TODOS,
+    EDITAR,
+    ELIMINAR
 }
