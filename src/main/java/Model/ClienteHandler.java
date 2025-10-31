@@ -90,7 +90,7 @@ public class ClienteHandler implements Runnable {
             case MENSAJE -> chatService.procesarMensaje(this, ((String[]) datos)[0], ((String[]) datos)[1]);
             case MENSAJE_TODOS -> chatService.procesarMensajeATodos(this, (String) datos);
             case EDITAR -> usuarioService.editarUsuario((UsuarioRed) datos);
-            case ELIMINAR -> null;
+            case ELIMINAR -> usuarioService.eliminarUsuario((String) datos);
         };
         System.out.println("Solicitud " + soli.toString() + " recibida de " + socket.getRemoteSocketAddress());
         System.out.println("Repondido con " + resp.getEstado().toString() + " a " + socket.getRemoteSocketAddress());

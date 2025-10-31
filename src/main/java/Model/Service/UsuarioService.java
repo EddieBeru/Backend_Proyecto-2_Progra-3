@@ -133,4 +133,13 @@ public class UsuarioService {
         }
         return new Respuesta(TipoRespuesta.OK, "Usuario editado correctamente");
     }
+
+    public Respuesta eliminarUsuario(String id) {
+        try {
+            new UsuarioDAO().delete(id);
+        } catch (SQLException e) {
+            return new Respuesta(TipoRespuesta.ERROR_GENERICO, "Idk");
+        }
+        return new Respuesta(TipoRespuesta.OK, "Usuario eliminado correctamente");
+    }
 }
