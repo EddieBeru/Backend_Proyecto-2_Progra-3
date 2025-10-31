@@ -7,12 +7,91 @@ import Model.Service.RecetaService;
 import Model.Service.UsuarioService;
 import Model.Usuario.Usuario;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 public class ClienteHandler implements Runnable {
+    private final Socket socket;
+    private BufferedReader in;
+    private PrintWriter out;
+    private String username;
+
+    public ClienteHandler(Socket socket) {
+        this.socket = socket;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void sendMessage(String msg) {
+        out.println(msg);
+    }
+
+    @Override
+    public void run() {
+        try {
+            in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            out = new PrintWriter(socket.getOutputStream(), true);
+
+            // Primer mensaje esperado: el nombre de usuario (solo el nombre)
+            out.println("ENVIE_SU_NOMBRE:");
+            String nameLine = in.readLine();
+            if (nameLine == null || nameLine.isBlank()) {
+                closeEverything();
+                return;
+            }
+            username = nameLine.trim();
+
+            // verificar si nombre ya existe
+            if (!Server.addClient(username, this)) {
+                out.println("ERROR:Nombre en uso. Conexión cerrada.");
+                closeEverything();
+                return;
+            }
+
+            out.println("OK:Bienvenido " + username);
+            System.out.println("Usuario conectado: " + username);
+
+            String line;
+            while ((line = in.readLine()) != null) {
+                line = line.trim();
+                if (line.isEmpty()) continue;
+                // formato esperado: destinatario:contenido
+                int idx = line.indexOf(':');
+                if (idx <= 0) {
+                    out.println("ERROR:Formato inválido. Use destinatario:contenido");
+                    continue;
+                }
+                String destinatario = line.substring(0, idx).trim();
+                String contenido = line.substring(idx + 1).trim();
+
+                ClienteHandler destHandler = Server.getClient(destinatario);
+                if (destHandler != null) {
+                    destHandler.sendMessage(username + ":" + contenido);
+                    out.println("ENVIADO a " + destinatario);
+                } else {
+                    out.println("USUARIO_DESCONECTADO:" + destinatario);
+                }
+            }
+        } catch (IOException e) {
+            // conexión caída
+        } finally {
+            System.out.println("Usuario desconectado: " + username);
+            Server.removeClient(username);
+            closeEverything();
+        }
+    }
+
+    private void closeEverything() {
+        try { if (in != null) in.close(); } catch (IOException ignored) {}
+        if (out != null) out.close();
+        try { if (socket != null && !socket.isClosed()) socket.close(); } catch (IOException ignored) {}
+    }
+}
+
+
+/*public class ClienteHandler implements Runnable {
     private boolean running = true;
 
     private final Socket socket;
@@ -119,4 +198,4 @@ public class ClienteHandler implements Runnable {
     public String getId() {
         return this.userId;
     }
-}
+}*/
