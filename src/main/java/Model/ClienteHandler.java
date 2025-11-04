@@ -10,6 +10,7 @@ import Model.Usuario.Usuario;
 import java.io.*;
 import java.net.Socket;
 
+/*
 public class ClienteHandler implements Runnable {
     private final Socket socket;
     private BufferedReader in;
@@ -45,7 +46,7 @@ public class ClienteHandler implements Runnable {
 
             // verificar si nombre ya existe
             if (!Server.addClient(username, this)) {
-                out.println("ERROR:Nombre en uso. Conexión cerrada.");
+                out. ("ERROR:Nombre en uso. Conexión cerrada.");
                 closeEverything();
                 return;
             }
@@ -90,8 +91,9 @@ public class ClienteHandler implements Runnable {
     }
 }
 
+*/
 
-/*public class ClienteHandler implements Runnable {
+public class ClienteHandler implements Runnable {
     private boolean running = true;
 
     private final Socket socket;
@@ -170,6 +172,14 @@ public class ClienteHandler implements Runnable {
             case MENSAJE_TODOS -> chatService.procesarMensajeATodos(this, (String) datos);
             case EDITAR -> usuarioService.editarUsuario((UsuarioRed) datos);
             case ELIMINAR -> usuarioService.eliminarUsuario((String) datos);
+            case GET_MEDICAMENTOS -> medService.getMedicamentos();
+            case ADD_MEDICAMENTO -> medService.addMedicamento((Medicamento) datos);
+            case EDIT_MEDICAMENTO -> medService.updateMedicamento((Medicamento) datos);
+            case DELETE_MEDICAMENTO -> medService.removeMedicamento((String) datos);
+            case GET_RECETAS -> null;
+            case ADD_RECETA -> null;
+            case EDIT_RECETA -> null;
+            case DELETE_RECETA -> null;
         };
         System.out.println("Solicitud " + soli.toString() + " recibida de " + socket.getRemoteSocketAddress());
         System.out.println("Repondido con " + resp.getEstado().toString() + " a " + socket.getRemoteSocketAddress());
@@ -198,4 +208,4 @@ public class ClienteHandler implements Runnable {
     public String getId() {
         return this.userId;
     }
-}*/
+}
