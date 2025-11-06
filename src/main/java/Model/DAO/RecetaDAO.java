@@ -6,6 +6,8 @@ import Model.Receta;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class RecetaDAO {
     private final Connection conexion;
@@ -93,4 +95,64 @@ public class RecetaDAO {
         }
         return lista;
     }
+
+    public Map<String, Object> obtenerIndicadoresDashboard() throws SQLException {
+        Map<String, Object> res = new HashMap<>();
+
+        // 1) Total de recetas emitidas
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "SELECT COUNT(*) FROM recetas");
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                res.put("totalRecetasEmitidas", rs.getInt(1));
+            }
+        }
+
+        // 2) Total de recetas despachadas (ej: estado = 'ENTREGADA')
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "SELECT COUNT(*) FROM recetas WHERE estado = 'ENTREGADA'");
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                res.put("totalRecetasDespachadas", rs.getInt(1));
+            }
+        }
+
+        // 3) Total de pacientes atendidos (pacientes distintos con al menos una receta)
+        try (PreparedStatement ps = conexion.prepareStatement(
+                "SELECT COUNT(DISTINCT paciente_id) FROM recetas");
+             ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                res.put("totalPacientesAtendidos", rs.getInt(1));
+            }
+        }
+
+        // 4) Top medicamentos más prescritos (ej: top 5)
+        List<Map<String, Object>> topMedicamentos = new ArrayList<>();
+        String sqlTop = """
+                SELECT m.codigo, m.nombre, COUNT(*) AS veces
+                FROM receta_preescripciones rp
+                JOIN medicamentos m ON rp.medicamento_codigo = m.codigo
+                GROUP BY m.codigo, m.nombre
+                ORDER BY veces DESC
+                LIMIT 5
+                """;
+
+        try (PreparedStatement ps = conexion.prepareStatement(sqlTop);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                Map<String, Object> fila = new HashMap<>();
+                fila.put("codigo", rs.getString("codigo"));
+                fila.put("nombre", rs.getString("nombre"));
+                fila.put("veces", rs.getInt("veces"));
+                topMedicamentos.add(fila);
+            }
+        }
+
+        res.put("topMedicamentos", topMedicamentos);
+
+        return res;
+    }
+
 }
+
+

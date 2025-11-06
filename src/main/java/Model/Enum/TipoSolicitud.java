@@ -1,0 +1,23 @@
+package Model.Enum;
+
+public enum TipoSolicitud {
+    CERRAR,
+    LOGIN,
+    REGISTRO,
+    GET_USUARIOS,
+    GET_USUARIOS_ACTIVOS,
+    CAMBIO_CLAVE,
+    MENSAJE,
+    MENSAJE_TODOS,
+    EDITAR,
+    ELIMINAR,
+    GET_MEDICAMENTOS,
+    ADD_MEDICAMENTO,
+    EDIT_MEDICAMENTO,
+    DELETE_MEDICAMENTO,
+    GET_RECETAS,
+    ADD_RECETA,
+    EDIT_RECETA,
+    DELETE_RECETA,
+    GET_INDICADORES          // ← NUEVO
+}
